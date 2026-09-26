@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>539資料分析程式</title>
+
+<style>
+body{
+    margin:0;
+    padding:20px;
+    background:#121212;
+    color:white;
+    font-family:"Microsoft JhengHei",sans-serif;
+    display:flex;
+    justify-content:center;
+}
+
+.container{
+    width:100%;
+    max-width:700px;
+    background:#1e1e1e;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+h1{
+    text-align:center;
+    color:#ffd54f;
+    margin-bottom:30px;
+}
+
+label{
+    display:block;
+    margin-bottom:10px;
+    font-size:20px;
+    color:#90caf9;
+}
+
+input[type="date"]{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    background:#2b2b2b;
+    color:white;
+    font-size:18px;
+}
+
+.number-row{
+    display:flex;
+    gap:10px;
+    margin-top:10px;
+    flex-wrap:wrap;
+}
+
+.number-input,
+.number-box{
+    width:60px;
+    height:60px;
+    border:none;
+    border-radius:12px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.number-input{
+    background:#2b2b2b;
+    color:white;
+}
+
+.number-box{
+    background:#3949ab;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+button{
+    width:100%;
+    margin-top:25px;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#ff9800;
+    color:white;
+    font-size:20px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#fb8c00;
+}
+
+.status{
+    margin-top:20px;
+    background:#2b2b2b;
+    padding:18px;
+    border-radius:12px;
+    text-align:center;
+    font-size:20px;
+    color:#80cbc4;
+}
+</style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#121212">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="539資料分析">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>539資料分析程式</h1>
+
+<label>今日日期</label>
+<input type="date" id="todayDate">
+
+<br><br>
+
+<label>今日水牌號碼</label>
+
+<div class="number-row" id="numberArea">
+    <input type="number" class="number-input" min="1" max="39">
+    <input type="number" class="number-input" min="1" max="39">
+    <input type="number" class="number-input" min="1" max="39">
+    <input type="number" class="number-input" min="1" max="39">
+    <input type="number" class="number-input" min="1" max="39">
+</div>
+
+<button onclick="startCalc()" id="calcBtn">開始計算</button>
+
+<div class="status" id="statusBox">
+等待輸入資料...
+</div>
+
+</div>
+
+<script>
+function startCalc(){
+
+    const date = document.getElementById('todayDate').value;
+    const inputs = document.querySelectorAll('.number-input');
+    const numberArea = document.getElementById('numberArea');
+    const statusBox = document.getElementById('statusBox');
+    const calcBtn = document.getElementById('calcBtn');
+
+    // 檢查日期
+    if(date === ''){
+        alert('請輸入今日日期');
+        return;
+    }
+
+    let numbers = [];
+
+    for(let input of inputs){
+
+        if(input.value === ''){
+            alert('請輸入完整五個號碼');
+            return;
+        }
+
+        numbers.push(input.value.padStart(2,'0'));
+    }
+
+    calcBtn.innerText = '計算中...';
+    calcBtn.disabled = true;
+
+    // 清空輸入框
+    numberArea.innerHTML = '';
+
+    // 顯示資料計算中
+    const loading = document.createElement('div');
+    loading.className = 'status';
+    loading.style.width = '100%';
+    loading.innerText = '資料計算中...';
+
+    numberArea.appendChild(loading);
+
+    statusBox.innerText = '系統計算中，請稍候約10秒...';
+
+    // 10秒後顯示原本數字
+    setTimeout(()=>{
+
+        numberArea.innerHTML = '';
+
+        numbers.forEach(num=>{
+            const box = document.createElement('div');
+            box.className = 'number-box';
+            box.innerText = num;
+            numberArea.appendChild(box);
+        });
+
+        statusBox.innerText = '資料計算完成';
+
+        calcBtn.innerText = '開始計算';
+        calcBtn.disabled = false;
+
+    },10000);
+
+}
+</script>
+
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js');
+  });
+}
+</script>
+
+</body>
+</html>
